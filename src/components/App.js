@@ -488,7 +488,7 @@ ConfirmationTable() {
                 <Tab eventKey="CreatesSecurity" title="Create Security">
                 <div>
                   <br></br>
-                    Change Issuer
+                    Crate security
                     <br></br>
 
                     <form onSubmit={(e) => {
@@ -509,7 +509,7 @@ ConfirmationTable() {
                           placeholder='Name...'
                           required />
 
-                        <label for="SecuritySymbol" style={{float: "left"}}>Token Issuer:</label>
+                        <label for="SecuritySymbol" style={{float: "left"}}>Symbol:</label>
                         <input
                           id='SecuritySymbol'
                           type='text'

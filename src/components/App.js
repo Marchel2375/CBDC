@@ -488,7 +488,7 @@ ConfirmationTable() {
                 <Tab eventKey="CreatesSecurity" title="Create Security">
                 <div>
                   <br></br>
-                    Crate security
+                    Create security
                     <br></br>
 
                     <form onSubmit={(e) => {

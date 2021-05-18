@@ -190,6 +190,15 @@ class App extends Component {
       
       try{
         await this.state.dApps.methods.AddSecurity(name, symbol).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
         this.loadsecurities()
       } catch (e) {
         console.log('Error, issuance: ', e)
@@ -202,6 +211,15 @@ class App extends Component {
       
       try{
         await this.state.dApps.methods.issuance(to, amount.toString()).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
       } catch (e) {
         console.log('Error, issuance: ', e)
       }
@@ -213,6 +231,15 @@ class App extends Component {
       
       try{
         await this.state.dApps.methods.issuanceSecurity(to, amount.toString(), id.toString()).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
       } catch (e) {
         console.log('Error, issuance: ', e)
       }
@@ -225,6 +252,15 @@ class App extends Component {
       try{
         
         await this.state.dApps.methods.transfer(to, amount.toString()).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
       } catch (e) {
         console.log('Error, issuance: ', e)
       }
@@ -237,6 +273,15 @@ class App extends Component {
       try{
         
         await this.state.dApps.methods.transferSecurity(to, amount.toString(), id.toString()).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
       } catch (e) {
         console.log('Error, issuance: ', e)
       }
@@ -247,6 +292,15 @@ class App extends Component {
     if(this.state.dApps!=='undefined'){
       try{
         await this.state.dApps.methods.redemption(amount.toString()).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
       } catch (e) {
         console.log('Error, issuance: ', e)
       }
@@ -257,6 +311,15 @@ class App extends Component {
     if(this.state.dApps!=='undefined'){
       try{
         await this.state.dApps.methods.redemptionSecurity(amount.toString(), id.toString()).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
       } catch (e) {
         console.log('Error, issuance: ', e)
       }
@@ -269,6 +332,15 @@ class App extends Component {
       try{
         
         await this.state.dApps.methods.RequestSellSecurity(amount.toString(), offer.toString(), to, security.toString()).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
         this.loadConfirmations()
         this.loadPendings()
       } catch (e) {
@@ -283,6 +355,15 @@ class App extends Component {
       try{
         
         await this.state.dApps.methods.CancelRequest(node.toString()).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
         this.loadConfirmations()
         this.loadPendings()
       } catch (e) {
@@ -297,6 +378,15 @@ class App extends Component {
       try{
         
         await this.state.dApps.methods.ConfirmRequest(node.toString()).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
         this.loadConfirmations()
         this.loadPendings()
       } catch (e) {
@@ -311,6 +401,15 @@ class App extends Component {
       try{
         
         await this.state.dApps.methods.RejectRequest(node.toString()).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
         this.loadConfirmations()
         this.loadPendings()
       } catch (e) {
@@ -343,6 +442,15 @@ class App extends Component {
       try{
         
         await this.state.dApps.methods.passCentralBankRole(newCB).send({from: this.state.account})
+        .on('transactionHash', (hash) => {
+          var answer = window.confirm("Redirect to etherscan?")
+          if (answer){
+            // similar behavior as an HTTP redirect
+            window.open("https://ropsten.etherscan.io/tx/" + hash);
+         
+          }
+          
+        })
       } catch (e) {
         console.log('Error, Request cant be canceleld: ', e)
       }

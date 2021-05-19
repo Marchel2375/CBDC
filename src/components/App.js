@@ -13,11 +13,12 @@ class App extends Component {
 
   async componentWillMount() {
     await this.loadBlockchainData(this.props.dispatch)
-    this.interval = setInterval(() => this.distributedTokens(), 5000);
     await this.loadConfirmations()
     await this.loadPendings()
     await this.loadTokenName()
     await this.loadsecurities()
+    await this.loadOwnership()
+    this.interval = setInterval(() => this.distributedTokens(), 5000);
   }
 
   async componentWillUnmount() {
@@ -78,7 +79,7 @@ class App extends Component {
       if(typeof accounts[0] !=='undefined'){
         const balance = await web3.eth.getBalance(accounts[0])
         this.setState({account: accounts[0], balance: balance, web3: web3})
-        console.log(this.state.account)
+        // console.log(this.state.account)
       } else {
         window.alert('Please login with MetaMask')
       }
@@ -101,6 +102,35 @@ class App extends Component {
     }
     
   }
+  async loadOwnership(){
+    var ownerships = []
+    for(var i = 0; i< this.state.addresses.length; i++){
+      var tempAddress = this.state.addresses[i]
+      var owns = []
+      //for default token
+      var amount = await this.state.token.methods.balanceOf(tempAddress).call();
+      if(amount > 0){
+        var temp = {name: this.state.tokenName, amount: amount/10**18}
+        owns.push(temp)
+      }
+      try{
+      //for securities
+        for(var j = 0; i< this.state.securities.length; j++){
+          amount = await this.state.securities[j]['security'].methods.balanceOf(tempAddress).call();
+          if(amount >0){
+            temp = {name: this.state.securities[j]['name'], amount: amount/10**18}
+            owns.push(temp)
+          }
+        }
+      }
+      catch(e){
+
+      }
+      ownerships.push({address: tempAddress, owns: owns})
+    }
+    this.setState({ownerships: ownerships})
+    console.log("ownership:", ownerships)
+  }
 
   async loadsecurities(){
     var securities = []
@@ -111,7 +141,7 @@ class App extends Component {
       const name = await tempSecurity.methods.name().call()
       securities.push({security: tempSecurity, name: name, address: security, id: i})
       this.setState({securities: securities})
-      console.log(securities)
+      // console.log(securities)
     }
     
   }
@@ -124,7 +154,7 @@ class App extends Component {
         var exist = true;
         do{
           var confirmations = await this.state.dApps.methods.nextConfirmations(index, this.state.account).call();
-          console.log("confirmation", confirmations);
+          // console.log("confirmation", confirmations);
           if(confirmations[0]&&confirmations[1]!=0){
             var temps = [];
             temps.push(await this.state.dApps.methods.GetRequest(confirmations[1]).call());
@@ -163,7 +193,7 @@ class App extends Component {
         var exist = true;
         do{
           var pendings = await this.state.dApps.methods.nextPendings(index, this.state.account).call();
-          console.log("pending", pendings);
+          // console.log("pending", pendings);
           if(pendings[0] && pendings[1]!= 0){
             var temps = []
             temps.push(await this.state.dApps.methods.GetRequest(pendings[1]).call())
@@ -430,6 +460,7 @@ class App extends Component {
           this.setState({SecuritySupply: securityT/10**18})
         }
         
+        
       } catch (e) {
         //console.log('Error, Supply: ', e);
       }
@@ -521,6 +552,33 @@ ConfirmationTable() {
     )
   }
 
+  ownershipsTable(){
+    var content = this.state.ownerships.map((owner)=>{
+      return (
+        <div>
+          <h5 style={{float: "left"}}>{owner.address}</h5>
+          <table class="table table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Asset</th>
+                <th scope="col">Amount</th>
+              </tr>
+            </thead>
+            {owner.owns.map((own)=>{
+              return(
+                <tr>
+                  <th>{own.name}</th>
+                  <th>{own.amount}</th>
+                </tr>
+              )
+            })}
+          </table>
+          <br></br>
+        </div>)
+    })
+    return content
+  }
+
   
 
 
@@ -538,7 +596,9 @@ ConfirmationTable() {
       pendings: [],
       tokenName: '',
       securities: [],
-      currentSecurities: 0
+      currentSecurities: 0,
+      ownerships: [],
+      addresses: ['0x2Bc21201Bc07acdB52E803a31edb4a2Cd6221C3E', '0x101a3B2DC23cD3CeC90A6a5B8994B121E78fE811']
     }
     this.ConfirmationTable = this.ConfirmationTable.bind(this);
   }
@@ -936,7 +996,16 @@ ConfirmationTable() {
                   </div>
                 </Tab>
 
-               
+                <Tab eventKey="Ownerships" title="Ownerships">
+                  <div>
+                    <br></br>
+                    Ownerships
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    {this.ownershipsTable()}
+                  </div>
+                </Tab>
 
 
               </Tabs>

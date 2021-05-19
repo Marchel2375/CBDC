@@ -13,12 +13,13 @@ class App extends Component {
 
   async componentWillMount() {
     await this.loadBlockchainData(this.props.dispatch)
+    await this.loadsecurities()
     await this.loadConfirmations()
     await this.loadPendings()
     await this.loadTokenName()
-    await this.loadsecurities()
-    await this.loadOwnership()
+    
     this.interval = setInterval(() => this.distributedTokens(), 5000);
+    await this.loadOwnership()
   }
 
   async componentWillUnmount() {
@@ -40,10 +41,11 @@ class App extends Component {
             console.log(accounts)
             const balance = web3.eth.getBalance(accounts[0])
             this.setState({account: accounts[0], balance: balance})
+            this.loadsecurities()
             this.loadConfirmations()
             this.loadPendings()
             this.loadTokenName()
-            this.loadsecurities()
+            
           } else {
             window.alert('Please login with MetaMask')
           }
@@ -56,17 +58,8 @@ class App extends Component {
       window.ethereum.on('networkChanged', (networkId)=>{
         console.log('networkChanged',networkId);
         try {
-          const token = new web3.eth.Contract(Token.abi, Token.networks[networkId].address)
-          const dApps = new web3.eth.Contract(dapps.abi, dapps.networks[networkId].address)
-          const dappsAddress = dapps.networks[networkId].address
-          const tokenAddress = Token.networks[networkId].address
-          this.setState({token: token, dApps: dApps, dappsAddress: dappsAddress, tokenAddress: tokenAddress})
-          this.setState({netid: networkId});
-          const tokenName = this.state.token.methods.name().call()
-          this.setState({tokenName: tokenName})
-          this.loadConfirmations()
-          this.loadPendings()
-          this.loadsecurities()
+          window.location.reload()
+          
         } catch (e) {
           console.log('Error', e)
           window.alert('Contracts not deployed to the current network')
@@ -113,9 +106,10 @@ class App extends Component {
         var temp = {name: this.state.tokenName, amount: amount/10**18}
         owns.push(temp)
       }
+      var j = 0
       try{
       //for securities
-        for(var j = 0; i< this.state.securities.length; j++){
+        for(j = 0; j< this.state.securitieslength; j++){
           amount = await this.state.securities[j]['security'].methods.balanceOf(tempAddress).call();
           if(amount >0){
             temp = {name: this.state.securities[j]['name'], amount: amount/10**18}
@@ -124,7 +118,7 @@ class App extends Component {
         }
       }
       catch(e){
-
+        alert(e)
       }
       ownerships.push({address: tempAddress, owns: owns})
     }
@@ -140,7 +134,7 @@ class App extends Component {
       const tempSecurity = new this.state.web3.eth.Contract(Security.abi, security)
       const name = await tempSecurity.methods.name().call()
       securities.push({security: tempSecurity, name: name, address: security, id: i})
-      this.setState({securities: securities})
+      this.setState({securities: securities, securitieslength: length})
       // console.log(securities)
     }
     
@@ -457,7 +451,8 @@ class App extends Component {
         if(this.state.currentSecurities != null){
           
           const securityT = await this.state.securities[parseInt(this.state.currentSecurities)]['security'].methods.totalSupply().call();
-          this.setState({SecuritySupply: securityT/10**18})
+          const temp = this.state.securities[parseInt(this.state.currentSecurities)]['address']
+          this.setState({SecuritySupply: securityT/10**18, currentSecurityAddress: temp})
         }
         
         

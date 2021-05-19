@@ -598,7 +598,7 @@ ConfirmationTable() {
       securities: [],
       currentSecurities: 0,
       ownerships: [],
-      addresses: ['0x2Bc21201Bc07acdB52E803a31edb4a2Cd6221C3E', '0x101a3B2DC23cD3CeC90A6a5B8994B121E78fE811']
+      addresses: ['0x2Bc21201Bc07acdB52E803a31edb4a2Cd6221C3E', '0x101a3B2DC23cD3CeC90A6a5B8994B121E78fE811','0xCb4B879Ad327373EE5A198EDe6658437231a8321']
     }
     this.ConfirmationTable = this.ConfirmationTable.bind(this);
   }

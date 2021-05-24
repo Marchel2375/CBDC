@@ -53,15 +53,12 @@ contract dapps {
         pendings[requests[node-1].Seller].remove(node);
     }
 
-    function ispending (uint256 node) view private returns(bool) {
-        require(msg.sender == requests[node-1].Seller);
-        require(keccak256(abi.encodePacked(requests[node-1].status)) == keccak256(abi.encodePacked("pending")));
-        return true;
+    function ispending (uint256 node) view private{
+        require((requests[node-1].status) == bytes32("pending"), "Error, request not pending");
     }
 
     function RequestSellSecurity(uint256 amount, uint256 price, address Buyer, uint256 id) public {
-        require(security[id].approve(address(this), amount),"error can't approve price");
-        require(security[id].transferFrom(msg.sender, address(this), amount), "Error, can't receive tokens");
+        transferSecurity(address(this), amount, id);
         Request memory temp;
         temp.Buyer = Buyer;
         temp.Seller = msg.sender;
@@ -82,9 +79,10 @@ contract dapps {
     }
 
     function CancelRequest(uint256 node) public{
-        require(ispending(node));
+        require(msg.sender == requests[node-1].Seller);
+        ispending(node);
         //return the token
-        security[requests[node-1].securityid].transfer(requests[node-1].Seller,requests[node-1].price);
+        security[requests[node-1].securityid].transfer(requests[node-1].Seller,requests[node-1].amount);
 
         RemoveConfirmPending (node);
 
@@ -92,9 +90,10 @@ contract dapps {
     }
 
     function RejectRequest(uint256 node) public{
-        require(ispending(node));
+        require(msg.sender == requests[node-1].Buyer);
+        ispending(node);
         //return the security
-        security[requests[node-1].securityid].transfer(requests[node-1].Seller,requests[node-1].price);
+        security[requests[node-1].securityid].transfer(requests[node-1].Seller,requests[node-1].amount);
 
         RemoveConfirmPending (node);
 
@@ -102,19 +101,23 @@ contract dapps {
     }
 
     function ConfirmRequest(uint256 node) public{
-        require(ispending(node));
+        require(msg.sender == requests[node-1].Buyer);
+        ispending(node);
 
         //transfer token
-        if(token.balanceOf(msg.sender) >= requests[node-1].amount){
-            require(token.approve(address(this), requests[node-1].amount));
-            require(token.transferFrom(msg.sender,requests[node-1].Seller , requests[node-1].amount));
+        if(token.balanceOf(msg.sender) >= requests[node-1].price){
+            transfer(requests[node-1].Seller, requests[node-1].price);
             //transfer security
-            security[requests[node-1].securityid].transfer(requests[node-1].Buyer,requests[node-1].price);
+            security[requests[node-1].securityid].transfer(requests[node-1].Buyer,requests[node-1].amount);
             requests[node-1].status = "success";
+            RemoveConfirmPending (node);
+        }
+        else{
+            RejectRequest(node);
         }
         
         //remove pendings and confrimations
-        RemoveConfirmPending (node);
+        
 
         
     }
@@ -162,7 +165,7 @@ contract dapps {
     }
 
     function passCentralBankRole(address newCB) public{
-        require(msg.sender==CB, 'Error, only Central Bank can pass Central Bank role');
+        require(msg.sender==CB, 'Error, msg.sender does not have central bank role');
         CB = newCB;
     }
 

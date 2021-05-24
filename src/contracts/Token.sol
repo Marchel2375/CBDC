@@ -8,7 +8,7 @@ contract Token is ERC20 {
     
     event MinterChanged(address indexed from, address to);
     
-    constructor() payable ERC20("Test Currency", "TCC") {
+    constructor() payable ERC20("CBDC", "CBDC") {
     minter = msg.sender; //only initially
     }
     
